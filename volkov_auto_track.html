@@ -1,0 +1,375 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Отслеживание заказа — Prime Motors</title>
+<meta name="robots" content="noindex">
+<meta name="description" content="Отслеживание статуса вашего автомобиля по персональной ссылке. Prime Motors — импорт авто под ключ.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --graphite:#212E38; --ink:#212E38; --steel:#79818A; --steel-2:#566069;
+    --page:#E4E5DF; --mist:#EFF0EB; --white:#FFFFFF; --line:#D9DAD4; --line-2:#C7C8C0;
+    --red:#B73A18; --red-press:#962F12; --red-tint:#FBEDE8;
+    --ok:#1f7a44; --ok-bg:#e4f3ea; --ok-bd:#bfe3cc;
+    --navy:#212E38; --navy-2:#2b3a46;
+    --ff:'Noto Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{font-family:var(--ff);background:var(--page);color:var(--ink);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+  a{color:inherit}
+  h1,h2,h3,h4{margin:0;font-weight:800;letter-spacing:-.01em}
+  button{font-family:var(--ff);cursor:pointer}
+  .wrap{max-width:660px;margin:0 auto;padding:0 18px}
+
+  /* header */
+  .top{background:var(--white);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20}
+  .top .wrap{display:flex;align-items:center;gap:12px;height:60px}
+  .brand{display:inline-flex;align-items:center;gap:9px;font-weight:800;font-size:18px;color:var(--ink);text-decoration:none}
+  .brand .pm-mark{width:26px;height:26px;color:var(--red)}
+  .sp{flex:1}
+  .top-sup{display:inline-flex;align-items:center;gap:7px;font-size:13.5px;font-weight:700;color:var(--graphite);text-decoration:none;border:1px solid var(--line-2);border-radius:9px;padding:8px 12px}
+  .top-sup svg{width:15px;height:15px}
+  .top-sup:hover{background:var(--mist)}
+
+  /* demo switcher */
+
+  h1.page-h1{font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--steel);font-weight:800;margin:22px 0 10px}
+  .demo{background:#fdf6ec;border:1px dashed #e4c48a;border-radius:12px;padding:12px 14px;margin:16px 0}
+  .demo .dl{font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:#9a7a2e;font-weight:800;margin-bottom:9px;display:flex;align-items:center;gap:7px}
+  .demo .dl svg{width:14px;height:14px}
+  .demo-chips{display:flex;gap:7px;flex-wrap:wrap}
+  .demo-chips button{border:1px solid #e4c48a;background:#fff;color:#7d6122;border-radius:999px;padding:6px 11px;font-size:12.5px;font-weight:600}
+  .demo-chips button.on{background:var(--graphite);border-color:var(--graphite);color:#fff}
+
+  /* hero status */
+  .hero{background:linear-gradient(155deg,var(--navy),var(--navy-2));color:#fff;border-radius:18px;padding:26px 24px;position:relative;overflow:hidden}
+  .hero .ord{font-size:12.5px;letter-spacing:.06em;color:#aab2bd;font-weight:600}
+  .hero .car{font-weight:800;font-size:22px;margin:4px 0 2px;line-height:1.15}
+  .hero .carsub{font-size:13px;color:#c2c8d0}
+  .hero .stline{margin-top:20px;display:flex;align-items:center;gap:10px}
+  .hero .stdot{width:10px;height:10px;border-radius:50%;background:#f0a33a;box-shadow:0 0 0 4px rgba(240,163,58,.22);flex-shrink:0;animation:pulse 1.8s infinite}
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 4px rgba(240,163,58,.22)}50%{box-shadow:0 0 0 7px rgba(240,163,58,.08)}}
+  .hero .stage{font-weight:800;font-size:18px}
+  .hero .stdesc{font-size:13.5px;color:#c6ccd3;margin-top:7px;line-height:1.45}
+  .hero .prog{margin-top:20px}
+  .hero .prog-bar{height:8px;border-radius:5px;background:rgba(255,255,255,.14);overflow:hidden}
+  .hero .prog-fill{height:100%;border-radius:5px;background:linear-gradient(90deg,#d9521f,#f0a33a);transition:width .5s ease}
+  .hero .prog-meta{display:flex;justify-content:space-between;margin-top:9px;font-size:12px;color:#aab2bd}
+  .hero .prog-meta b{color:#fff;font-weight:700}
+
+  /* generic card */
+  .card{background:var(--white);border:1px solid var(--line);border-radius:16px;padding:20px 22px;margin-top:16px}
+  .card > .h{display:flex;align-items:center;gap:9px;margin-bottom:16px}
+  .card > .h h2{font-size:15px}
+  .card > .h .ic{width:30px;height:30px;border-radius:8px;background:var(--mist);display:flex;align-items:center;justify-content:center;color:var(--graphite);flex-shrink:0}
+  .card > .h .ic svg{width:17px;height:17px}
+
+  /* timeline */
+  .tl{position:relative}
+  .tl-step{position:relative;padding:0 0 22px 40px}
+  .tl-step:last-child{padding-bottom:0}
+  .tl-step::before{content:"";position:absolute;left:13px;top:26px;bottom:-4px;width:2px;background:var(--line-2)}
+  .tl-step:last-child::before{display:none}
+  .tl-dot{position:absolute;left:4px;top:1px;width:20px;height:20px;border-radius:50%;border:2px solid var(--line-2);background:#fff;display:flex;align-items:center;justify-content:center}
+  .tl-dot svg{width:11px;height:11px;color:#fff;opacity:0}
+  .tl-name{font-weight:700;font-size:14.5px;color:var(--steel-2)}
+  .tl-desc{font-size:13px;color:var(--steel);margin-top:3px;line-height:1.4}
+  .tl-date{font-size:12px;color:var(--steel);margin-top:5px;font-weight:600}
+  /* done */
+  .tl-step.done::before{background:var(--ok)}
+  .tl-step.done .tl-dot{background:var(--ok);border-color:var(--ok)}
+  .tl-step.done .tl-dot svg{opacity:1}
+  .tl-step.done .tl-name{color:var(--ink)}
+  /* current */
+  .tl-step.cur .tl-dot{border-color:var(--red);background:var(--red-tint);box-shadow:0 0 0 4px var(--red-tint)}
+  .tl-step.cur .tl-dot::after{content:"";width:8px;height:8px;border-radius:50%;background:var(--red)}
+  .tl-step.cur .tl-name{color:var(--ink);font-weight:800}
+  .tl-step.cur .tl-date{color:var(--red);font-weight:700}
+
+  /* route */
+  .route{margin-top:4px}
+  .route-line{position:relative;height:3px;background:var(--line-2);border-radius:3px;margin:30px 6px 10px}
+  .route-done{position:absolute;left:0;top:0;height:100%;border-radius:3px;background:var(--red);transition:width .5s ease}
+  .route-pt{position:absolute;top:50%;transform:translate(-50%,-50%);width:12px;height:12px;border-radius:50%;background:#fff;border:2px solid var(--line-2)}
+  .route-pt.a{left:0;border-color:var(--graphite);background:var(--graphite)}
+  .route-pt.b{left:100%;border-color:var(--graphite)}
+  .route-car{position:absolute;top:50%;transform:translate(-50%,-50%);transition:left .5s ease;z-index:2;background:var(--red);color:#fff;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(183,58,24,.4)}
+  .route-car svg{width:15px;height:15px}
+  .route-ends{display:flex;justify-content:space-between;font-size:12.5px;color:var(--steel-2);font-weight:600}
+  .route-ends .flag{font-size:15px;margin-right:4px}
+
+  /* specs / kv */
+  .kv{display:grid;grid-template-columns:auto 1fr;gap:10px 16px;font-size:14px}
+  .kv .k{color:var(--steel)}
+  .kv .v{font-weight:600;text-align:right}
+
+  /* photos */
+  .ph{position:relative;border-radius:12px;overflow:hidden;aspect-ratio:16/10;background:linear-gradient(160deg,#e9eae5,#d3d5ce);display:flex;align-items:center;justify-content:center}
+  .ph .sil{width:62%;color:#c4c7bf}
+  .ph .cnt{position:absolute;right:10px;bottom:10px;background:rgba(18,22,26,.6);color:#fff;font-size:12px;padding:3px 9px;border-radius:20px}
+  .ph-note{font-size:12.5px;color:var(--steel);margin-top:10px;text-align:center}
+
+  /* docs */
+  .doc{display:flex;align-items:center;gap:12px;padding:12px 0;border-top:1px solid var(--line)}
+  .doc:first-child{border-top:0}
+  .doc .di{width:34px;height:34px;border-radius:8px;background:var(--red-tint);color:var(--red);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .doc .di svg{width:17px;height:17px}
+  .doc .dn{font-weight:600;font-size:14px}
+  .doc .dm{font-size:12px;color:var(--steel)}
+  .doc .da{margin-left:auto}
+  .doc .dl-btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line-2);background:#fff;border-radius:8px;padding:7px 11px;font-size:12.5px;font-weight:700;color:var(--graphite)}
+  .doc .dl-btn:hover{background:var(--mist)}
+  .doc .pend{font-size:12px;color:var(--steel);font-weight:600}
+
+  /* manager */
+  .mgr{display:flex;align-items:center;gap:14px}
+  .mgr .av{width:52px;height:52px;border-radius:50%;background:var(--graphite);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:17px;flex-shrink:0}
+  .mgr .mn{font-weight:800;font-size:16px}
+  .mgr .mr{font-size:12.5px;color:var(--steel)}
+  .mgr-btns{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+  .mgr-btns a{flex:1;min-width:120px;display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px;border-radius:11px;font-weight:700;font-size:14px;text-decoration:none}
+  .mgr-btns svg{width:17px;height:17px}
+  .b-call{background:var(--graphite);color:#fff}
+  .b-call:hover{background:#2b3a46}
+  .b-tg{background:var(--red);color:#fff}
+  .b-tg:hover{background:var(--red-press)}
+
+  /* help cta */
+  .help{text-align:center;padding:26px 22px}
+  .help h2{font-size:17px}
+  .help p{color:var(--steel-2);font-size:14px;margin:8px 0 0}
+
+  /* footer */
+  footer{margin-top:28px;padding:26px 0 34px;border-top:1px solid var(--line-2);background:#D9DAD4}
+  footer .wrap{font-size:12.5px;color:var(--steel-2);line-height:1.6}
+  footer .fbrand{font-weight:800;color:var(--graphite);font-size:15px;display:flex;align-items:center;gap:8px;margin-bottom:10px}
+  footer .fbrand .pm-mark{width:22px;height:22px;color:var(--red)}
+  footer a{color:var(--steel-2)}
+
+  @media(max-width:560px){
+    .hero{padding:22px 18px}
+    .hero .car{font-size:19px}
+    .card{padding:18px}
+    .top-sup span{display:none}
+    .top-sup{padding:9px}
+  }
+
+  .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:var(--graphite);color:#fff;padding:12px 18px;border-radius:11px;font-size:13.5px;font-weight:600;box-shadow:0 10px 30px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:.25s;z-index:60;max-width:88vw;text-align:center}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a href="#" class="brand"><svg class="pm-mark" viewBox="0 0 100 100" fill="none" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" d="M 4,50 A46,46 0 1,0 96,50 A46,46 0 1,0 4,50 Z M 50,16.5 L -7.58,74.89 L 2.5,83.34 Z M 50,16.5 L 10.75,88.49 L 22.76,93.84 Z M 50,16.5 L 32.11,96.53 L 45.14,98.36 Z M 50,16.5 L 54.86,98.36 L 67.89,96.53 Z M 50,16.5 L 77.24,93.84 L 89.25,88.49 Z M 50,16.5 L 97.5,83.34 L 107.58,74.89 Z"/></svg><span>Prime Motors</span></a>
+    <div class="sp"></div>
+    <a class="top-sup" id="supLink" href="tel:+79021112233"><svg viewBox="0 0 24 24" fill="none"><path d="M5 4h4l2 5-3 2a12 12 0 005 5l2-3 5 2v4a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><span>Поддержка</span></a>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- ДЕМО-переключатель этапов (удалить при публикации) -->
+  <div class="demo">
+    <div class="dl"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2l2.4 7.4H22l-6 4.5 2.3 7.1-6.3-4.6L5.7 21 8 14 2 9.4h7.6z" fill="currentColor"/></svg>Демо · предпросмотр этапа заказа</div>
+    <div class="demo-chips" id="demoChips"></div>
+  </div>
+
+  <h1 class="page-h1">Отслеживание заказа</h1>
+
+  <!-- status hero -->
+  <section class="hero">
+    <div class="ord" id="hOrd">Заказ PM-2026-0483</div>
+    <div class="car" id="hCar">Toyota Land Cruiser 300</div>
+    <div class="carsub" id="hSub">Япония · 3.5 V6, 2024</div>
+    <div class="stline"><span class="stdot"></span><span class="stage" id="hStage">Доставка</span></div>
+    <div class="stdesc" id="hDesc"></div>
+    <div class="prog">
+      <div class="prog-bar"><div class="prog-fill" id="hFill" style="width:0"></div></div>
+      <div class="prog-meta"><span>Готовность заказа</span><span><b id="hPct">0%</b></span></div>
+    </div>
+  </section>
+
+  <!-- timeline -->
+  <section class="card">
+    <div class="h"><span class="ic"><svg viewBox="0 0 24 24" fill="none"><path d="M12 8v4l3 2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/></svg></span><h2>Статус заказа</h2></div>
+    <div class="tl" id="tl"></div>
+  </section>
+
+  <!-- route -->
+  <section class="card">
+    <div class="h"><span class="ic"><svg viewBox="0 0 24 24" fill="none"><path d="M12 21s7-6.2 7-11a7 7 0 10-14 0c0 4.8 7 11 7 11z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><circle cx="12" cy="10" r="2.4" stroke="currentColor" stroke-width="1.7"/></svg></span><h2>Маршрут доставки</h2></div>
+    <div class="route">
+      <div class="route-ends"><span><span class="flag" id="rFlag">🇯🇵</span><span id="rFrom">Япония</span></span><span><span class="flag">📍</span><span id="rTo">Пермь</span></span></div>
+      <div class="route-line">
+        <div class="route-done" id="rDone" style="width:0"></div>
+        <span class="route-pt a"></span>
+        <span class="route-pt b"></span>
+        <span class="route-car" id="rCar" style="left:0"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M5 11l1.3-3.8A2 2 0 018.2 6h7.6a2 2 0 011.9 1.2L19 11c1 .2 1.7 1 1.7 2v3a1 1 0 01-1 1h-1a2 2 0 01-4 0h-5.4a2 2 0 01-4 0h-1a1 1 0 01-1-1v-3c0-1 .7-1.8 1.7-2zM7 14.2a1.2 1.2 0 100 2.4 1.2 1.2 0 000-2.4zm10 0a1.2 1.2 0 100 2.4 1.2 1.2 0 000-2.4z"/></svg></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- car -->
+  <section class="card">
+    <div class="h"><span class="ic"><svg viewBox="0 0 24 24" fill="none"><path d="M5 11l1.5-4A2 2 0 018.4 6h7.2a2 2 0 011.9 1.2L19 11M5 11h14M6 11v3m12-3v3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span><h2>Автомобиль</h2></div>
+    <div class="ph">
+      <svg class="sil" viewBox="0 0 120 54" fill="currentColor" aria-hidden="true"><path d="M8 40c0-2 1-10 4-13 2-2 7-4 14-4h26c8 0 14 4 18 8l16 3c6 1 10 4 10 9v4H8v-7z"/><circle cx="30" cy="44" r="7" fill="#fff"/><circle cx="30" cy="44" r="3.4"/><circle cx="86" cy="44" r="7" fill="#fff"/><circle cx="86" cy="44" r="3.4"/></svg>
+      <span class="cnt">Фото авто · обновляется</span>
+    </div>
+    <div class="ph-note">Менеджер добавляет фото осмотра, погрузки и готового авто по мере прохождения этапов.</div>
+    <div class="kv" style="margin-top:16px">
+      <div class="k">Страна</div><div class="v" id="cCountry">Япония</div>
+      <div class="k">Марка и модель</div><div class="v" id="cModel">Toyota Land Cruiser 300</div>
+      <div class="k">Комплектация</div><div class="v" id="cTrim">3.5 V6, 2024</div>
+      <div class="k">VIN</div><div class="v" id="cVin">JTM••••••••12345</div>
+      <div class="k">Стоимость под ключ</div><div class="v" id="cPrice">8 900 000 ₽</div>
+    </div>
+  </section>
+
+  <!-- docs -->
+  <section class="card">
+    <div class="h"><span class="ic"><svg viewBox="0 0 24 24" fill="none"><path d="M7 3h7l5 5v13a1 1 0 01-1 1H7a1 1 0 01-1-1V4a1 1 0 011-1z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M14 3v5h5M9 13h6M9 16h6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></span><h2>Документы</h2></div>
+    <div id="docs"></div>
+  </section>
+
+  <!-- manager -->
+  <section class="card">
+    <div class="mgr">
+      <div class="av" id="mAv">АС</div>
+      <div><div class="mn" id="mName">Анна Соколова</div><div class="mr">Ваш персональный менеджер</div></div>
+    </div>
+    <div class="mgr-btns">
+      <a class="b-call" id="mCall" href="tel:+79021112233"><svg viewBox="0 0 24 24" fill="none"><path d="M5 4h4l2 5-3 2a12 12 0 005 5l2-3 5 2v4a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>Позвонить</a>
+      <a class="b-tg" id="mTg" href="https://t.me/volkov_auto" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.9 4.3l-3 14.1c-.2 1-.8 1.2-1.7.8l-4.6-3.4-2.2 2.1c-.2.2-.4.4-.9.4l.3-4.7 8.6-7.7c.4-.3-.1-.5-.6-.2L7.2 12.5l-4.6-1.4c-1-.3-1-1 .2-1.5l18-6.9c.8-.3 1.5.2 1.1 1.6z"/></svg>Telegram</a>
+    </div>
+  </section>
+
+  <!-- help -->
+  <section class="card help">
+    <h2>Остались вопросы по заказу?</h2>
+    <p>Напишите менеджеру — ответим в течение рабочего дня и подскажем точные сроки по вашему автомобилю.</p>
+  </section>
+
+</main>
+
+<div class="toast" id="toast"></div>
+
+<footer>
+  <div class="wrap">
+    <div class="fbrand"><svg class="pm-mark" viewBox="0 0 100 100" fill="none" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" d="M 4,50 A46,46 0 1,0 96,50 A46,46 0 1,0 4,50 Z M 50,16.5 L -7.58,74.89 L 2.5,83.34 Z M 50,16.5 L 10.75,88.49 L 22.76,93.84 Z M 50,16.5 L 32.11,96.53 L 45.14,98.36 Z M 50,16.5 L 54.86,98.36 L 67.89,96.53 Z M 50,16.5 L 77.24,93.84 L 89.25,88.49 Z M 50,16.5 L 97.5,83.34 L 107.58,74.89 Z"/></svg>Prime Motors</div>
+    <p>Эта страница — персональная ссылка для отслеживания вашего заказа. Данные обновляет ваш менеджер.<br>ИП Волков Константин Геннадьевич. © 2026 Prime Motors.</p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var $=function(s,r){return (r||document).querySelector(s);};
+
+  // ---- этапы клиентского пути (изолированный справочник; backend маппит стадии amoCRM сюда) ----
+  var STAGES=[
+    {key:"new",     label:"Заявка принята",      desc:"Мы получили вашу заявку и закрепили персонального менеджера."},
+    {key:"pick",    label:"Подбор автомобиля",   desc:"Подбираем и согласовываем конкретный автомобиль под ваш запрос и бюджет."},
+    {key:"deal",    label:"Договор и оплата",     desc:"Заключен договор, внесена предоплата. Запускаем выкуп."},
+    {key:"buy",     label:"Выкуп автомобиля",     desc:"Автомобиль выкуплен в стране отправления, готовится к отправке."},
+    {key:"ship",    label:"Доставка",            desc:"Автомобиль в пути до России. Отслеживаем перемещение."},
+    {key:"customs", label:"Таможня и растаможка", desc:"Оформление и оплата таможенных платежей, подготовка документов."},
+    {key:"ready",   label:"Готов к выдаче",       desc:"Автомобиль в вашем городе. Согласуем дату и место выдачи."}
+  ];
+  var DATES={new:"14 сен",pick:"18 сен",deal:"22 сен",buy:"28 сен",ship:"8 окт",customs:"16 окт",ready:"24 окт"};
+
+  // ---- данные заказа: пример-заглушка; backend подставляет реальные данные сделки по токену из ссылки ----
+  var ORDER={
+    id:"PM-2026-0483",
+    car:"Toyota Land Cruiser 300",
+    country:"Япония", flag:"🇯🇵", city:"Пермь",
+    trim:"3.5 V6, 2024",
+    vin:"JTM••••••• 12345",
+    price:"8 900 000 ₽",
+    eta:"конец октября 2026",
+    stage:"ship",
+    manager:{name:"Анна Соколова", phone:"+7 (902) 111-22-33", tel:"+79021112233", tg:"https://t.me/volkov_auto"},
+    docs:[
+      {name:"Договор купли-продажи", meta:"№ 483 от 22.09.2026", stageAt:"deal"},
+      {name:"Инвойс на автомобиль",  meta:"Invoice PM-483",        stageAt:"buy"},
+      {name:"Акт осмотра авто",      meta:"Фото- и видеоотчет",     stageAt:"buy"},
+      {name:"Таможенная декларация", meta:"ГТД",                    stageAt:"customs"}
+    ]
+  };
+
+  // токен из ссылки вида ?id=PM-2026-0483 (для бэкенда — ключ заказа)
+  try{ var qp=new URLSearchParams(location.search); var qid=qp.get("id"); if(qid)ORDER.id=qid; var qs=qp.get("stage"); if(qs)ORDER.stage=qs; }catch(e){}
+
+  function idx(k){ for(var i=0;i<STAGES.length;i++){ if(STAGES[i].key===k)return i; } return 0; }
+  function initials(nm){ var w=(nm||"").trim().split(/\s+/); return ((w[0]||"").charAt(0)+(w[1]||"").charAt(0)).toUpperCase(); }
+
+  var okSvg='<svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+  function render(){
+    var ci=idx(ORDER.stage), cur=STAGES[ci];
+    // hero
+    $("#hOrd").textContent="Заказ "+ORDER.id;
+    $("#hCar").textContent=ORDER.car;
+    $("#hSub").textContent=ORDER.country+" · "+ORDER.trim;
+    $("#hStage").textContent=cur.label;
+    $("#hDesc").textContent=cur.desc+(ci<STAGES.length-1?(" Ориентир выдачи: "+ORDER.eta+"."):"");
+    var pct=Math.round(ci/(STAGES.length-1)*100);
+    $("#hFill").style.width=pct+"%"; $("#hPct").textContent=pct+"%";
+    // timeline
+    var html="";
+    for(var i=0;i<STAGES.length;i++){
+      var st=STAGES[i], cls=i<ci?"done":(i===ci?"cur":"");
+      var date=i<ci?DATES[st.key]:(i===ci?"Сейчас в работе":"");
+      html+='<div class="tl-step '+cls+'"><span class="tl-dot">'+okSvg+'</span>'
+          +'<div class="tl-name">'+st.label+'</div>'
+          +'<div class="tl-desc">'+st.desc+'</div>'
+          +(date?('<div class="tl-date">'+date+'</div>'):'')+'</div>';
+    }
+    $("#tl").innerHTML=html;
+    // route
+    $("#rFlag").textContent=ORDER.flag; $("#rFrom").textContent=ORDER.country; $("#rTo").textContent=ORDER.city;
+    $("#rDone").style.width=pct+"%"; $("#rCar").style.left=pct+"%";
+    // car
+    $("#cCountry").textContent=ORDER.country; $("#cModel").textContent=ORDER.car;
+    $("#cTrim").textContent=ORDER.trim; $("#cVin").textContent=ORDER.vin; $("#cPrice").textContent=ORDER.price;
+    // docs — доступен, если его этап уже пройден или идет
+    var d="";
+    for(var j=0;j<ORDER.docs.length;j++){ var doc=ORDER.docs[j]; var ready=idx(doc.stageAt)<=ci;
+      d+='<div class="doc"><span class="di"><svg viewBox="0 0 24 24" fill="none"><path d="M7 3h7l5 5v13a1 1 0 01-1 1H7a1 1 0 01-1-1V4a1 1 0 011-1z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M14 3v5h5" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg></span>'
+        +'<div><div class="dn">'+doc.name+'</div><div class="dm">'+doc.meta+'</div></div>'
+        +'<div class="da">'+(ready?'<button class="dl-btn" data-doc="'+doc.name+'"><svg viewBox="0 0 24 24" width="13" height="13" fill="none"><path d="M12 3v11m0 0l-4-4m4 4l4-4M5 20h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Скачать</button>':'<span class="pend">будет позже</span>')+'</div></div>';
+    }
+    $("#docs").innerHTML=d;
+    // manager
+    $("#mAv").textContent=initials(ORDER.manager.name);
+    $("#mName").textContent=ORDER.manager.name;
+    $("#mCall").setAttribute("href","tel:"+ORDER.manager.tel);
+    $("#supLink").setAttribute("href","tel:"+ORDER.manager.tel);
+    $("#mTg").setAttribute("href",ORDER.manager.tg);
+    var chips=document.querySelectorAll("#demoChips button");
+    for(var c=0;c<chips.length;c++){ chips[c].classList.toggle("on",chips[c].getAttribute("data-k")===ORDER.stage); }
+    document.title="Заказ "+ORDER.id+" — Prime Motors";
+  }
+
+  var ch="";
+  for(var i=0;i<STAGES.length;i++){ ch+='<button data-k="'+STAGES[i].key+'">'+STAGES[i].label+'</button>'; }
+  $("#demoChips").innerHTML=ch;
+
+  document.addEventListener("click",function(e){
+    var b=e.target.closest("#demoChips button"); if(b){ ORDER.stage=b.getAttribute("data-k"); render(); window.scrollTo({top:0,behavior:"smooth"}); return; }
+    var dl=e.target.closest("[data-doc]"); if(dl){ toast("«"+dl.getAttribute("data-doc")+"» — загрузка (демо)"); return; }
+  });
+
+  function toast(t){ var el=$("#toast"); if(!el)return; el.textContent=t; el.classList.add("show"); clearTimeout(el._t); el._t=setTimeout(function(){ el.classList.remove("show"); },2000); }
+
+  render();
+})();
+</script>
+</body>
+</html>
